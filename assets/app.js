@@ -98,8 +98,8 @@
       langOther: "Other"
     },
     "zh-CN": {
-      docTitle: "书海拾贝 · 电子书宝库",
-      metaDescription: "个人电子书宝库，支持实时多关键词搜索，下载链接托管于城通网盘。",
+      docTitle: "书海拾贝 · 公版电子书分类目录",
+      metaDescription: "书海拾贝收录约 35,895 本公版与开放授权电子书，按分类浏览中国古典、世界文学、历史社科、科普与教材等书目。",
       brand: "书海拾贝 · 电子书宝库",
       skip: "跳到书籍列表",
       searchPlaceholder: "搜索书名、作者或分类，例如「傲慢与偏见」",
@@ -2158,8 +2158,8 @@
       } catch (err) {}
     }
     document.title = t("docTitle");
-    var metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) metaDesc.setAttribute("content", t("metaDescription"));
+    var metaDesc = document.querySelector('meta[name="description"][lang="' + currentLang + '"]');
+    if (metaDesc && currentLang === "zh-CN") metaDesc.setAttribute("content", t("metaDescription"));
     fillText("[data-i18n]", "data-i18n", function (node, text) {
       if (node.classList.contains("brand")) {
         var mark = node.querySelector(".brand-mark");
