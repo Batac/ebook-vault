@@ -3,3 +3,6 @@
 
 /data/books/*
   Cache-Control: public, max-age=604800
+
+/md/*
+  Content-Type: text/plain; charset=utf-8
