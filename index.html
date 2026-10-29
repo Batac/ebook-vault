@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>书海拾贝 · 电子书宝库</title>
+  <meta name="description" content="个人电子书宝库，支持实时多关键词搜索。" />
+  <meta name="color-scheme" content="dark light" />
+  <meta name="theme-color" content="#14110e" />
+  <meta name="robots" content="index, follow" />
+  
+  <link rel="icon" href="assets/logo-mark.png" type="image/png" />
+  <script>
+    (function () {
+      try {
+        var savedTheme = localStorage.getItem("ebook-vault-theme");
+        var theme = savedTheme === "light" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+      var lang = "zh-CN";
+      try {
+        var savedLang = localStorage.getItem("ebook-vault-lang");
+        if (savedLang === "en" || savedLang === "zh-CN") lang = savedLang;
+      } catch (e2) {}
+      document.documentElement.lang = lang;
+      document.documentElement.setAttribute("data-lang", lang === "zh-CN" ? "zh" : "en");
+      if (lang === "zh-CN") document.documentElement.setAttribute("data-i18n-pending", "1");
+      document.title = lang === "zh-CN" ? "书海拾贝 · 电子书宝库" : "Ebook Vault";
+    })();
+  </script>
+  <style>html[data-i18n-pending] body{visibility:hidden}</style>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#grid" data-i18n="skip">Skip to books</a>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <h1 class="brand" data-i18n="brand"><img class="brand-mark" src="assets/logo-mark.png" alt="" width="26" height="26" />Ebook Vault</h1>
+      <div class="search" role="search">
+        <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"></circle>
+          <path d="m16.5 16.5 4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+        </svg>
+        <input id="q" class="search-input" type="search" inputmode="search"
+               placeholder="Search title, author, or topic, e.g. Pride and Prejudice"
+               data-i18n-placeholder="searchPlaceholder"
+               aria-label="Search title, author, category, tags, or filename"
+               data-i18n-aria="searchAria"
+               autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" />
+        <kbd class="kbd" aria-hidden="true">/</kbd>
+      </div>
+      <div class="header-tools">
+        <div class="lang-switch" id="lang-switch" role="group" aria-label="Language" data-i18n-aria="langAria">
+          <button type="button" class="lang-btn" data-lang="en" aria-pressed="true">English</button>
+          <button type="button" class="lang-btn" data-lang="zh-CN" aria-pressed="false">简体中文</button>
+        </div>
+        <button type="button" class="theme-toggle" id="theme-toggle"
+                aria-label="Switch to dark mode" title="Switch to dark mode" aria-pressed="false">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="subbar">
+    <a class="root-link" id="root-link" href="#" target="_blank" rel="noopener noreferrer" hidden data-i18n="rootLink">
+      📥 Download full library
+    </a>
+  </div>
+
+  <noscript>
+    <div class="noscript">Search and filters need JavaScript. Enable JavaScript and refresh. 本站的实时搜索与筛选依赖 JavaScript，请在浏览器中启用 JavaScript 后刷新页面。</div>
+  </noscript>
+
+  <main class="layout">
+    <aside class="filters" id="filters" aria-label="Filters" data-i18n-aria="filtersAria">
+      <div class="filters-backdrop" id="filters-backdrop"></div>
+      <div class="filters-dialog" id="filters-dialog" tabindex="-1" aria-labelledby="filters-dialog-title">
+      <div class="filters-head">
+        <h2>
+          <span class="filters-title" id="filters-dialog-title" data-i18n="filtersTitle">Filters</span>
+          <span class="filter-count" id="filter-count" hidden>0</span>
+        </h2>
+        <button type="button" id="clear-filters" class="link-btn" data-i18n="clearFilters">Clear all</button>
+      </div>
+
+      <section class="filter-group" id="folder-links-group" hidden>
+        <h3>
+          <span class="group-title"><span class="group-icon" aria-hidden="true">📥</span><span data-i18n="folderTitle">Collections</span></span>
+          <span class="hint" data-i18n="folderHint">Category folders</span>
+        </h3>
+        <div class="folder-links" id="folder-links"></div>
+      </section>
+
+      <section class="filter-group">
+        <h3>
+          <span class="group-title"><span class="group-icon" aria-hidden="true">🗂️</span><span data-i18n="categoryTitle">Categories</span></span>
+          <span class="hint" data-i18n="multiHint">Multi-select</span>
+        </h3>
+        <div class="chips" id="filter-categories"></div>
+      </section>
+
+      <label class="switch">
+        <span class="switch-icon" aria-hidden="true">✅</span>
+        <span class="switch-text">
+          <strong data-i18n="onlyDownloadable">Downloadable only</strong>
+        </span>
+        <input type="checkbox" id="only-downloadable" />
+      </label>
+        <div class="filters-actions">
+          <button type="button" class="btn primary filters-done" id="filters-done" data-i18n="filtersDone">Done</button>
+        </div>
+      </div>
+    </aside>
+
+    <section class="content" aria-label="Books" data-i18n-aria="contentAria">
+      <div class="toolbar">
+        <button type="button" class="filters-open" id="filters-open" aria-expanded="false" aria-controls="filters-dialog">
+          <span data-i18n="filtersOpen">Filter</span>
+          <span class="filter-count" id="filter-count-open" hidden>0</span>
+        </button>
+        <p class="count" id="result-count" aria-live="polite">
+          <span class="count-library"><span id="count-lead" data-i18n="countLead"></span><strong id="count-total">0</strong><span id="count-mid"> books / </span></span><span id="count-filtered-lead" class="count-filtered-lead"></span><strong id="count-filtered">0</strong><span id="count-tail" data-i18n="countTail"> shown</span>
+        </p>
+        <label class="sort">
+          <span data-i18n="sortLabel">Sort</span>
+          <select id="sort" aria-label="Sort by" data-i18n-aria="sortAria">
+            <option value="recommended" selected data-i18n="sortRecommended">Recommended</option>
+            <option value="relevance" data-i18n="sortRelevance">Relevance</option>
+            <option value="title" data-i18n="sortTitle">Title</option>
+            <option value="size" data-i18n="sortSize">Size</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="loading" id="loading" data-i18n="loading">Loading the library…</div>
+
+      <div class="grid" id="grid"></div>
+
+      <div class="empty" id="empty" hidden>
+        <p class="empty-title" id="empty-title" data-i18n="emptyTitle">No matching ebooks</p>
+        <p class="empty-hint" id="empty-hint" data-i18n="emptyHint">Try a shorter query, or clear the filters.</p>
+        <button type="button" class="btn primary" id="empty-reset" data-i18n="emptyReset">Clear search and filters</button>
+      </div>
+
+      <div class="load-more-wrap">
+        <button type="button" class="btn load-more" id="load-more" hidden data-i18n="loadMore">Load more</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p id="footer-line" data-book-count="35,895">Ebook Vault · 35,895 books</p>
+    <p class="footer-notice" data-i18n="footerNotice">
+      Copyright: this library is a personal collection drawn from public-domain and openly licensed sources. Rights remain with the authors and rights holders; contact us to request removal. Download links are for personal study and bandwidth testing only. Delete them within 24 hours and do not use them commercially. Please support official editions.
+    </p>
+  </footer>
+
+  <button type="button" class="to-top" id="to-top" aria-label="Back to top" title="Back to top" data-i18n-aria="toTop" data-i18n-title="toTop">↑</button>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>

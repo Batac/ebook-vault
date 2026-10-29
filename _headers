@@ -1,0 +1,5 @@
+/data/*
+  Cache-Control: public, max-age=604800
+
+/data/books/*
+  Cache-Control: public, max-age=604800
